@@ -74,64 +74,58 @@ def timing_decorator(func):
     return wrapper
 
 
-def teams_on_failure():
-    def decorator(func):
-        @functools.wraps(func)
-        def wrapper(*args, **kwargs):
-            webhook_url = get_env_variable("TEAMS_WEBHOOK_URL")
-            try:
-                result = func(*args, **kwargs)
-                return result
-            except Exception as e:
-                # Send an alert to Microsoft Teams
-                message = {
-                    "title": "Function failed!",
-                    "text": f"Function '{func.__name__}' has failed with error: {str(e)}",
-                }
-                response = requests.post(
-                    webhook_url,
-                    data=json.dumps(message),
-                    headers={"Content-Type": "application/json"},
+def teams_on_failure(func):
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        webhook_url = get_env_variable("TEAMS_WEBHOOK_URL")
+        try:
+            result = func(*args, **kwargs)
+            return result
+        except Exception as e:
+            # Send an alert to Microsoft Teams
+            message = {
+                "title": "Function failed!",
+                "text": f"Function '{func.__name__}' has failed with error: {str(e)}",
+            }
+            response = requests.post(
+                webhook_url,
+                data=json.dumps(message),
+                headers={"Content-Type": "application/json"},
+            )
+            if response.status_code != 200:
+                print(
+                    f"Request to Microsoft Teams returned an error {response.status_code}, {response.text}"
                 )
-                if response.status_code != 200:
-                    print(
-                        f"Request to Microsoft Teams returned an error {response.status_code}, {response.text}"
-                    )
-                else:
-                    print("Alert sent to Microsoft Teams")
-                raise
+            else:
+                print("Alert sent to Microsoft Teams")
+            raise
 
-        return wrapper
-
-    return decorator
+    return wrapper
 
 
-def slack_on_failure():
-    def decorator(func):
-        @functools.wraps(func)
-        def wrapper(*args, **kwargs):
-            webhook_url = get_env_variable("SLACK_WEBHOOK_URL")
-            try:
-                result = func(*args, **kwargs)
-                return result
-            except Exception as e:
-                # Send an alert to Slack
-                message = {
-                    "text": f"Function '{func.__name__}' has failed with error: {str(e)}",
-                }
-                response = requests.post(
-                    webhook_url,
-                    data=json.dumps(message),
-                    headers={"Content-Type": "application/json"},
+def slack_on_failure(func):
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        webhook_url = get_env_variable("SLACK_WEBHOOK_URL")
+        try:
+            result = func(*args, **kwargs)
+            return result
+        except Exception as e:
+            # Send an alert to Slack
+            message = {
+                "text": f"Function '{func.__name__}' has failed with error: {str(e)}",
+            }
+            response = requests.post(
+                webhook_url,
+                data=json.dumps(message),
+                headers={"Content-Type": "application/json"},
+            )
+            if response.status_code != 200:
+                print(
+                    f"Request to Slack returned an error {response.status_code}, {response.text}"
                 )
-                if response.status_code != 200:
-                    print(
-                        f"Request to Slack returned an error {response.status_code}, {response.text}"
-                    )
-                else:
-                    print("Alert sent to Slack")
-                raise
+            else:
+                print("Alert sent to Slack")
+            raise
 
-        return wrapper
-
-    return decorator
+    return wrapper
