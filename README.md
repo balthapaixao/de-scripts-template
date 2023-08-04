@@ -73,6 +73,7 @@ Regarding the `scripts` folder.
 - Add a `Makefile` to automate the execution of the scripts.
 - Add a `Dockerfile` to containerize the project.
 - Add tests for the scripts.
+- Create a CI/CD pipeline for the project.
 
 ## Author
 
