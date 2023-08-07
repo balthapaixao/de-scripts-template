@@ -11,11 +11,11 @@ import glob
 from .file_utilities import get_path
 from .credentials_utilities import get_env_variable
 
-path = get_path()
+PATH = get_path()
 
 
 def delete_old_logs(days: int = 1):
-    folder_path = f"{path}/../../logs/"
+    folder_path = f"{PATH}/../../logs/"
     current_time = time.time()
     for file_path in glob.glob(os.path.join(folder_path, "*.log")):
         # Get the file's creation time
@@ -32,13 +32,13 @@ def delete_old_logs(days: int = 1):
 
 def set_basic_logs():
     date = datetime.datetime.now().strftime("%Y%m%d%H%M")
-    project_name = path.split("/")[-3]
+    project_name = PATH.split("/")[-3]
     LOGGING_FORMAT = os.environ.get(
         "LOGGING_FORMAT",
         "[%(asctime)s][%(pathname)s:%(lineno)d][%(levelname)s] - %(message)s",
     )
     LOGGING_FILE = os.environ.get(
-        "LOGGING_FILE", f"{path}/../../logs/script_{project_name}-{date}.log"
+        "LOGGING_FILE", f"{PATH}/../../logs/script_{project_name}-{date}.log"
     )
     logging.basicConfig(
         filename=f"{LOGGING_FILE}", level=logging.INFO, format=LOGGING_FORMAT
@@ -66,7 +66,7 @@ def timing_decorator(func):
         start_time = time.time()
         result = func(*args, **kwargs)
         end_time = time.time()
-        logger.info(
+        logger.warning(
             f"Function {func.__name__} took {end_time - start_time} seconds to run."
         )
         return result
