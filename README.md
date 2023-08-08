@@ -59,6 +59,7 @@ Regarding the `scripts` folder.
 
 ## How to use it
 
+0. Star this repository. :star:
 1. Clone the repository.
 2. Rename the folder `de_scripts_template` to the name of the project.
 3. Fill the files in the `data` folder with the data that is needed for the project.
